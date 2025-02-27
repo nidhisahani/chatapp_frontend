@@ -11,15 +11,19 @@ import { IoSearchOutline } from "react-icons/io5";
 const MyChat = () => {
     const dispatch = useDispatch();
     const myChat = useSelector((store) => store.myChat.chat);
-    const authUserId = useSelector((store) => store?.auth?._id);
+    const authUserId = useSelector((store) => store.auth.user.data._id);
     const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
     const isChatLoading = useSelector((store) => store?.condition?.isChatLoading);
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
-
-    // Re-render on new message or group chat creation
+    const [searchQuery, setSearchQuery] = useState("");
     const newMessageId = useSelector((store) => store?.message?.newMessageId);
     const isGroupChatId = useSelector((store) => store.condition.isGroupChatId);
 
+    console.log(authUserId);
+
+    const auth = useSelector((store) => store?.auth);
+    console.log("Auth state:", auth);
+
+    
     // Fetch all chats
     useEffect(() => {
         const getMyChat = () => {
@@ -29,7 +33,7 @@ const MyChat = () => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    Authorization:` Bearer ${token}`,
                 },
             })
                 .then((res) => res.json())
@@ -58,12 +62,10 @@ const MyChat = () => {
                 return emailMatch || phoneMatch;
             }
         }
-
         // For group chats, check the chat name
         if (chat.isGroupChat) {
             return chat.chatName?.toLowerCase().includes(searchQuery.toLowerCase());
         }
-
         return false;
     });
 
@@ -107,6 +109,7 @@ const MyChat = () => {
                             </div>
                         ) : (
                             filteredChats?.map((chat) => {
+                                // console.log(chat);
                                 return (
                                     <div
                                         key={chat?._id}
@@ -168,4 +171,4 @@ const MyChat = () => {
     );
 };
 
-export default MyChat;
+export default MyChat;

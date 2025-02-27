@@ -11,7 +11,7 @@ import MessageSend from "./MessageSend";
 import { addAllMessages } from "../../redux/slices/messageSlice";
 import MessageLoading from "../loading/MessageLoading";
 import { addSelectedChat } from "../../redux/slices/myChatSlice";
-import getChatName,{getUserDetail , getChatImage } from "../../utils/getChatName";
+import  { getChatImage } from "../../utils/getChatName";
 import { toast } from "react-toastify";
 import socket from "../../socket/socket";
 
@@ -20,7 +20,6 @@ const MessageBox = ({ chatId }) => {
     const chatDetailsBox = useRef(null);
     const [isExiting, setIsExiting] = useState(false);
     const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
-    const [userProfile, setUserProfile] = useState(null);
 
     const isChatDetailsBox = useSelector(
         (store) => store?.condition?.isChatDetailsBox
@@ -28,6 +27,7 @@ const MessageBox = ({ chatId }) => {
     const isMessageLoading = useSelector(
         (store) => store?.condition?.isMessageLoading
     );
+
     const allMessage = useSelector((store) => store?.message?.message);
     const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
     const authUserId = useSelector((store) => store?.auth?._id);
@@ -41,7 +41,7 @@ const MessageBox = ({ chatId }) => {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization:` Bearer ${token}`,
-                }
+                },
             })
                 .then((res) => res.json())
                 .then((json) => {
@@ -86,37 +86,11 @@ const MessageBox = ({ chatId }) => {
         setIsSidePanelOpen(!isSidePanelOpen);
     };
 
-    // const fetchUserProfile = async () => {
-    //     const token = localStorage.getItem("token");
-    //     try {
-    //         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-    //         const data = await response.json();
-    //         setUserProfile(data.data);
-    //     } catch (error) {
-    //         console.error("Failed to fetch user profile:", error);
-    //         toast.error("Failed to fetch user profile");
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     if (isSidePanelOpen) {
-    //         fetchUserProfile();
-    //     }
-    // }, [isSidePanelOpen]);
-    const otherUser = getUserDetail(selectedChat, authUserId);
-
     return (
         <div className="flex h-[90vh]">
             <div
-                className={`transition-all duration-300 ${
-                    isSidePanelOpen ? "w-2/3" : "w-full"
-                }`}
+                className={`transition-all duration-300 ${isSidePanelOpen ? "w-2/3" : "w-full"
+                    }`}
             >
                 <div className="py-6 sm:px-6 px-3 w-full h-[7vh] font-semibold flex justify-between items-center bg-white text-black">
                     <div className="flex items-center gap-2 cursor-pointer">
@@ -135,9 +109,9 @@ const MessageBox = ({ chatId }) => {
                                 alt=""
                                 className="h-12 w-20 rounded-full"
                             />
-                            <h1 className="line-clamp-1">
-                                {getChatName(selectedChat, authUserId)}
-                            </h1>
+                            <p className="text-center text-gray-600">
+                                {selectedChat.users[1].username}
+                            </p>
                         </div>
                     </div>
                     <div onClick={toggleSidePanel} className="md:hidden mr-4">
@@ -146,9 +120,8 @@ const MessageBox = ({ chatId }) => {
                 </div>
                 {isChatDetailsBox && (
                     <div
-                        className={`h-[60vh] w-full max-w-96 absolute top-0 left-0 z-20 p-1 ${
-                            isExiting ? "box-exit" : "box-enter"
-                        }`}
+                        className={`h-[60vh] w-full max-w-96 absolute top-0 left-0 z-20 p-1 ${isExiting ? "box-exit" : "box-enter"
+                            }`}
                     >
                     </div>
                 )}
@@ -174,14 +147,17 @@ const MessageBox = ({ chatId }) => {
                         alt=""
                         className="h-auto rounded-full shadow-xl mx-auto mb-4"
                     />
-                    <h1 className="text-center text-lg font-semibold">
-                        {getChatName(selectedChat, authUserId)}
-                    </h1>
-                    {otherUser && (
+                    {selectedChat && (
                         <div className="mt-4">
-							<p className="text-center text-gray-600">{otherUser.phone}</p>
-                            <p className="text-center text-gray-600"> {otherUser.email}</p>
-                            
+                            <p className="text-center text-gray-600">
+                                {selectedChat.users[1].username}
+                            </p>
+                            <p className="text-center text-gray-600">
+                                {selectedChat.users[1].phone}
+                            </p>
+                            <p className="text-center text-gray-600">
+                                {selectedChat.users[1].email}
+                            </p>
                         </div>
                     )}
                 </div>

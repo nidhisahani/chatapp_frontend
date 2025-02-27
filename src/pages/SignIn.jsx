@@ -28,12 +28,14 @@ const SignIn = () => {
         })
             .then((response) => response.json())
             .then((json) => {
+                console.log(json);
                 setLoad("");
                 e.target.disabled = false;
                 toast.dismiss();
                 if (json.token) {
                     localStorage.setItem("token", json.token);
-                    dispatch(login(json.user)); // Dispatch the login action with user data
+                    dispatch(login(json)); // Dispatch the login action with user data
+                    // dispatch(login({ _id: json.user._id })); // Store only user ID
                     navigate("/"); // Navigate to the home page
                     toast.success(json?.message);
                 } else {
@@ -140,4 +142,4 @@ const SignIn = () => {
     );
 };
 
-export default SignIn;
+export default SignIn;
