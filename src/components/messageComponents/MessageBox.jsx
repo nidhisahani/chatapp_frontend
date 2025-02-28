@@ -11,7 +11,7 @@ import MessageSend from "./MessageSend";
 import { addAllMessages } from "../../redux/slices/messageSlice";
 import MessageLoading from "../loading/MessageLoading";
 import { addSelectedChat } from "../../redux/slices/myChatSlice";
-import getChatName, { getChatImage } from "../../utils/getChatName";
+import getChatName, {getUserDetail, getChatImage } from "../../utils/getChatName";
 import { toast } from "react-toastify";
 import socket from "../../socket/socket";
 
@@ -153,8 +153,14 @@ const MessageBox = ({ chatId }) => {
                             <p className="text-center text-gray-600">
                                 {getChatName(selectedChat, authUserId)}
                             </p>
+                            <p className="text-center text-gray-600">
+                                {getUserDetail(selectedChat, authUserId).phone}
+                            </p>
+                            <p className="text-center text-gray-600">
+                                {getUserDetail(selectedChat, authUserId).email}
+                            </p>
                         </div>
-                    )}
+                    )}
                 </div>
             )}
         </div>
