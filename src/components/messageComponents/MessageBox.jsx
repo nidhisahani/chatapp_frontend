@@ -11,7 +11,7 @@ import MessageSend from "./MessageSend";
 import { addAllMessages } from "../../redux/slices/messageSlice";
 import MessageLoading from "../loading/MessageLoading";
 import { addSelectedChat } from "../../redux/slices/myChatSlice";
-import  { getChatImage } from "../../utils/getChatName";
+import getChatName, { getChatImage } from "../../utils/getChatName";
 import { toast } from "react-toastify";
 import socket from "../../socket/socket";
 
@@ -30,7 +30,8 @@ const MessageBox = ({ chatId }) => {
 
     const allMessage = useSelector((store) => store?.message?.message);
     const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
-    const authUserId = useSelector((store) => store?.auth?._id);
+    const authUserId = useSelector((store) => store.auth.user.data._id);
+    console.log(authUserId);
 
     useEffect(() => {
         const getMessage = (chatId) => {
@@ -109,9 +110,9 @@ const MessageBox = ({ chatId }) => {
                                 alt=""
                                 className="h-12 w-20 rounded-full"
                             />
-                            <p className="text-center text-gray-600">
-                                {selectedChat.users[1].username}
-                            </p>
+                            <span className="line-clamp-1 capitalize">
+                                {getChatName(selectedChat, authUserId)}
+                            </span>
                         </div>
                     </div>
                     <div onClick={toggleSidePanel} className="md:hidden mr-4">
@@ -150,13 +151,7 @@ const MessageBox = ({ chatId }) => {
                     {selectedChat && (
                         <div className="mt-4">
                             <p className="text-center text-gray-600">
-                                {selectedChat.users[1].username}
-                            </p>
-                            <p className="text-center text-gray-600">
-                                {selectedChat.users[1].phone}
-                            </p>
-                            <p className="text-center text-gray-600">
-                                {selectedChat.users[1].email}
+                                {getChatName(selectedChat, authUserId)}
                             </p>
                         </div>
                     )}

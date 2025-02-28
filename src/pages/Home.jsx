@@ -16,21 +16,26 @@ import socket from "../socket/socket";
 import { addAllMessages, addNewMessage } from "../redux/slices/messageSlice";
 import {
 	addNewChat,
+	addSelectedChat,
 	addNewMessageRecieved,
 	deleteSelectedChat,
 } from "../redux/slices/myChatSlice";
 import { toast } from "react-toastify";
+// import { getOtherUserDetails } from "../utils/getChatName";
 let selectedChatCompare;
 
 
 const Home = () => {
+	const authUserId = useSelector((store) => store.auth.user.data._id);
 	const selectedChat = useSelector((store) => store?.myChat?.selectedChat);
+	// const otherUser = getOtherUserDetails(selectedChat, authUserId);
+	// console.log(otherUser);
+	// console.log(selectedChat);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const isUserSearchBox = useSelector(
 		(store) => store?.condition?.isUserSearchBox
 	);
-	const authUserId = useSelector((store) => store?.auth?._id);
 
 	// socket connection
 	useEffect(() => {
@@ -92,6 +97,7 @@ const Home = () => {
 	useEffect(() => {
 		const chatCreatedHandler = (chat) => {
 			dispatch(addNewChat(chat));
+			dispatch(addSelectedChat(chat)); // Ensure the new chat is selected properly
 			toast.success("Created & Selected chat");
 		};
 		socket.on("chat created", chatCreatedHandler);
@@ -110,9 +116,8 @@ const Home = () => {
 	return (
 		<div className="flex w-full  border rounded-sm shadow-md  relative">
 			<div
-				className={`${
-					selectedChat && "hidden"
-				} sm:block sm:w-[40%] w-full h-[90vh] bg-white text-black border-r border-slate-500 relative`}
+				className={`${selectedChat && "hidden"
+					} sm:block sm:w-[40%] w-full h-[90vh] bg-white text-black border-r border-slate-500 relative`}
 			>
 				<div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
 					{/* Logout Button (Left Corner) */}
@@ -133,9 +138,8 @@ const Home = () => {
 				{isUserSearchBox ? <UserSearch /> : <MyChat />}
 			</div>
 			<div
-				className={`${
-					!selectedChat && "hidden"
-				} sm:block sm:w-[60%] w-full h-[90vh] bg-white text-black relative overflow-hidden`}
+				className={`${!selectedChat && "hidden"
+					} sm:block sm:w-[60%] w-full h-[90vh] bg-white text-black relative overflow-hidden`}
 			>
 				{selectedChat ? (
 					<MessageBox chatId={selectedChat?._id} />
@@ -147,4 +151,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default Home;

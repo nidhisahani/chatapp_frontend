@@ -10,7 +10,7 @@ import {
 
 const AllMessages = ({ allMessage }) => {
     const chatBox = useRef();
-    const adminId = useSelector((store) => store.auth?._id);
+    const adminId = useSelector((store) => store.auth.user.data._id);
     const isTyping = useSelector((store) => store?.condition?.isTyping);
 
     const [scrollShow, setScrollShow] = useState(true);
@@ -64,7 +64,13 @@ const AllMessages = ({ allMessage }) => {
                 ref={chatBox}
             >
                 {allMessage?.map((message, idx) => {
+                    console.log(message?.sender?._id);
                     const isSender = message?.sender?._id === adminId;
+
+                    // Debugging logs
+                    console.log("Message Sender ID:", message?.sender?._id);
+                    console.log("Admin ID:", adminId);
+                    console.log("Is Sender:", isSender);
 
                     return (
                         <Fragment key={message._id}>
@@ -76,32 +82,27 @@ const AllMessages = ({ allMessage }) => {
                                     new Date(
                                         message?.updatedAt
                                     ).toDateString() && (
-                                    <span className="text-xs font-light mb-2 mt-1 text-white bg-black h-7 w-fit px-5 rounded-md flex items-center justify-center cursor-pointer">
-                                        {SimpleDateMonthDay(message?.updatedAt)}
-                                    </span>
-                                )}
+                                        <span className="text-xs font-light mb-2 mt-1 text-white bg-black h-7 w-fit px-5 rounded-md flex items-center justify-center cursor-pointer">
+                                            {SimpleDateMonthDay(message?.updatedAt)}
+                                        </span>
+                                    )}
                             </div>
 
                             {/* Message Bubble */}
                             <div
-                                className={`flex justify-end gap-1 ${
-                                    isSender ? "flex-row-reverse" : "flex-row"
-                                }`}
+                                className={`flex gap-1 ${isSender ? " justify-end" : " justify-start"}`}
                             >
                                 {/* Message Content */}
                                 <div
-                                    className={`${
-                                        isSender
+                                    className={`${isSender
                                             ? "bg-blue-950 text-white rounded-xl"
-                                            : "bg-white text-black rounded-xl"
-                                    } py-1.5 px-2 min-w-10 text-start flex flex-col relative max-w-[85%]`}
+                                            : "bg-black text-white rounded-xl"
+                                        } py-1.5 px-2 min-w-10 text-start flex flex-col relative max-w-[85%]`}
                                 >
-
                                     {/* Message Text */}
                                     <div
-                                        className={`mt-1 pb-1.5 ${
-                                            isSender ? "pr-16" : "pr-12"
-                                        }`}
+                                        className={`mt-1 pb-1.5 ${isSender ? "pr-16" : "pr-12"
+                                            }`}
                                     >
                                         <span>{message?.message}</span>
 
@@ -113,12 +114,15 @@ const AllMessages = ({ allMessage }) => {
                                             )}
                                         >
                                             {SimpleTime(message?.updatedAt)}
-                                            {isSender && (
+                                            {isSender ? (
                                                 <VscCheckAll
                                                     color="white"
                                                     fontSize={14}
                                                 />
-                                            )}
+                                            ) : <VscCheckAll
+                                            color="white"
+                                            fontSize={14}
+                                        />}
                                         </span>
                                     </div>
                                 </div>
@@ -140,4 +144,4 @@ const AllMessages = ({ allMessage }) => {
     );
 };
 
-export default AllMessages;
+export default AllMessages;
